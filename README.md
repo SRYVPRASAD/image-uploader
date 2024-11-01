@@ -28,7 +28,7 @@ To run this application, ensure you have the following installed:
 
 - [Node.js](https://nodejs.org/) (version 14 or higher)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-- API endpoint: Create an API using Cloudflare Workers to handle image uploads. Example code for the worker is provided below.
+- API endpoint: Create an API using Cloudflare Workers to handle image uploads(#cloudflare-worker-for-image-api). Example code for the worker is provided below.
 
 ### Installation
 
