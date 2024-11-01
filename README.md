@@ -28,7 +28,7 @@ To run this application, ensure you have the following installed:
 
 - [Node.js](https://nodejs.org/) (version 14 or higher)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-- API endpoint: Create an API using Cloudflare Workers to handle image uploads(#cloudflare-worker-for-image-api). Example code for the worker is provided below.
+- API endpoint: Create an API using [Cloudflare Workers to handle image uploads](#cloudflare-worker-for-image-api). Example code for the worker is provided below.
 
 ### Installation
 
@@ -67,60 +67,61 @@ const API_URL = 'https://your-api-url.com/';
 
 Use the following Cloudflare Worker script to set up your image upload API:
 
-```javascript
-const API_URL = "https://api.cloudflare.com/client/v4/accounts/ACC_NUM/images/v1";
-const TOKEN = "API_TOKEN";
-
-export default {
-  async fetch(request, env) {
-    if (request.method !== 'POST') {
-      return new Response("Only POST requests are allowed", { status: 405 });
-    }
-
-    // Parse form data from the incoming request
-    const formData = await request.formData();
-    const file = formData.get('file');
-
-    if (!file) {
-      return new Response("No file found in the request", { status: 400 });
-    }
-
-    // Create new FormData to send to the Cloudflare API
-    const apiFormData = new FormData();
-    apiFormData.append('file', file, file.name);
-
-    // Send the image to the Cloudflare Images API
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${TOKEN}`,
-      },
-      body: apiFormData,
-    });
-
-    const result = await response.json();
-
-    if (response.ok && result.success) {
-      const variants = result.result.variants;
-      console.log("Image Variants:", variants);
-      return new Response(JSON.stringify({ message: "Image uploaded successfully!", variants }), {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*', // Adjust as needed
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Authorization, Content-Type',
-        },
-      });
-    } else {
-      console.error("Upload failed:", result.errors);
-      return new Response(`Upload failed: ${result.errors[0]?.message || "Unknown error"}`, {
-        status: 500,
-        headers: { 'Content-Type': 'text/plain' },
-      });
-    }
-  }
-};
-```
+  ```javascript
+      const ACC_NUMBER = 'Cloudflare_ACCOUNT'
+      const API_URL = `https://api.cloudflare.com/client/v4/accounts/${ACC_NUMBER}/images/v1`;
+      const TOKEN = "API_TOKEN";
+      
+      export default {
+        async fetch(request, env) {
+          if (request.method !== 'POST') {
+            return new Response("Only POST requests are allowed", { status: 405 });
+          }
+      
+          // Parse form data from the incoming request
+          const formData = await request.formData();
+          const file = formData.get('file');
+      
+          if (!file) {
+            return new Response("No file found in the request", { status: 400 });
+          }
+      
+          // Create new FormData to send to the Cloudflare API
+          const apiFormData = new FormData();
+          apiFormData.append('file', file, file.name);
+      
+          // Send the image to the Cloudflare Images API
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${TOKEN}`,
+            },
+            body: apiFormData,
+          });
+      
+          const result = await response.json();
+      
+          if (response.ok && result.success) {
+            const variants = result.result.variants;
+            console.log("Image Variants:", variants);
+            return new Response(JSON.stringify({ message: "Image uploaded successfully!", variants }), {
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*', // Adjust as needed
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+              },
+            });
+          } else {
+            console.error("Upload failed:", result.errors);
+            return new Response(`Upload failed: ${result.errors[0]?.message || "Unknown error"}`, {
+              status: 500,
+              headers: { 'Content-Type': 'text/plain' },
+            });
+          }
+        }
+      };
+  ```
 
 In this worker script:
 - **API_URL**: Your Cloudflare Images API URL.
