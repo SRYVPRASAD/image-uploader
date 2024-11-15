@@ -34,7 +34,7 @@ To run this application, ensure you have the following installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/image-uploader.git
+   git clone https://github.com/SRYVPRASAD/image-uploader.git
    cd image-uploader
    ```
 
